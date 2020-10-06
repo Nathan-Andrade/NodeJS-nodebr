@@ -4,6 +4,8 @@
 2 Obter o endereco do user pelo ID
 */
 
+const util = require('util')
+
 function getUser(){
   //quando der algum problema -> reject(ERROR)
   //quando der sucess -> RESOLV
