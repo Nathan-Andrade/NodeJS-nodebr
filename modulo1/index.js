@@ -5,6 +5,8 @@
 */
 
 const util = require('util')
+const getAddressAsync = util.promisify(getAddress)
+
 
 function getUser(){
   //quando der algum problema -> reject(ERROR)
@@ -46,27 +48,67 @@ function resolveUser(err, user){
 
 }
 
-const userPromise = getUser()
+main()
+async function main(){
+  try {
+    console.time('medida-promise')
+    const user = await getUser()
+   // const telefone = await getTelephone(user.id)
+   // const endereco = await getAddressAsync(user.id)
+   const resultado = await Promise.all([
+    getTelephone(user.id),
+    getAddressAsync(user.id)
+   ])
+   const endereco = resultado[1]
+   const telefone = resultado[0]
+
+    console.log(`
+      Nome: ${user.name}
+      Telefone: (${telefone.ddd}) ${telefone.telephone}
+      Endereço: ${endereco.rua}, ${endereco.number}
+    `)
+    console.timeEnd('medida-promise')
+  }
+  catch(error){
+    console.error('DEU RUIM', error)
+  }
+}
+
+//const userPromise = getUser()
 //para manipular o sucesso função .then
-  userPromise
-  .then(function (telephone){
-    return getTelephone(telephone.id)
-      .then(function resolverTelephone(result){
-        return{
-          usuario: {
-            nome: telephone.name,
-            id: telephone.id
-          },
-          telefone: result
-        }
-      })
-  })
-  .then(function(resultado){
-    console.log('Resultado', resultado)
-  })  //para manipular erros função .catch
-  .catch(function(error){     
-      console.error('DEU RUIM :(', error)
-  })
+ // userPromise
+ // .then(function (telephone){
+ //   return getTelephone(telephone.id)
+  //    .then(function resolverTelephone(result){
+  //      return{
+  //        usuario: {
+  //          nome: telephone.name,
+ //           id: telephone.id
+  //        },
+  //        telefone: result
+  //      }
+ //     })
+ // })
+ // .then(function (resultado){
+ //   const address = getAddressAsync(resultado.usuario.id)
+ //   return address.then(function resolverAddress(result){
+ //     return {
+ //       usuario:resultado.usuario,
+ //       telefone: resultado.telefone,
+ //       address: result
+ //     }
+ //   })
+ // })
+ // .then(function(resultado){
+ //   console.log(`
+ //     Nome: ${resultado.usuario.nome}
+//      Endereço: ${resultado.address.rua}, ${resultado.address.number}
+//      Telefone: (${resultado.telefone.ddd}) ${resultado.telefone.telephone}
+//    `)
+ // })  //para manipular erros função .catch
+//  .catch(function(error){     
+ //     console.error('DEU RUIM :(', error)
+ // })
 
 // getUser(function resolveUser(err, user){
 //   if(err){
