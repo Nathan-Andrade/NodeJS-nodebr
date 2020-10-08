@@ -53,9 +53,8 @@ async function main(){
   try {
     console.time('medida-promise')
     const user = await getUser()
-   // const telefone = await getTelephone(user.id)
-   // const endereco = await getAddressAsync(user.id)
    const resultado = await Promise.all([
+     //métodos para executar
     getTelephone(user.id),
     getAddressAsync(user.id)
    ])
@@ -109,33 +108,3 @@ async function main(){
 //  .catch(function(error){     
  //     console.error('DEU RUIM :(', error)
  // })
-
-// getUser(function resolveUser(err, user){
-//   if(err){
-//     console.log('Deu Ruim o user :(', err)
- //    return;
- //  }
-
- //  getTelephone(user.id, function resolveTelephone(err1, telephone){
- //   if (err1) {
- //     console.log('Deu Ruim no Telephone :(', err)
- //     return;
-  //  }
-  //  getAddress(user.id, function resolveAdress(err2, address){
-  //    if(err2){
-  //      console.log('Deu Ruim no Address', err)
- //     }
-
- //     console.log(`
- //       Name: ${user.name},
- //       Address: ${address.rua}, N°${address.number}
- //       Telephone: (${telephone.ddd}) ${telephone.telephone}
- //     `)
- //   })
- //  })
- //})
-
-
-
-//console.log('user', user);
-//console.log('telephone', telephone);
