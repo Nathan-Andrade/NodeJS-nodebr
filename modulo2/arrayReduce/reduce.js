@@ -12,10 +12,7 @@ async function main(){
   try{
     const { results } = await getPeople(`a`)
     const pesos = results.map(item => parseInt(item.height))
-   // const total = pesos.reduce((before, after) => {
-   //   return before + after
-   // }, 0)
-   const myList = [
+    const myList = [
      ['Nathan', 'Andrade'],
      ['NodeJs', 'Nerd']
    ]
