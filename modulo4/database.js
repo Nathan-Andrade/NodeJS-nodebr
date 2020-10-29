@@ -12,11 +12,13 @@ class Database {
     const file = await readFileAsync(this.FILE_NAME, 'utf8')
     return JSON.parse(file.toString())
   }
+
   async writeFile(data){
     await writeFileAsync(this.FILE_NAME, JSON.stringify(data))
 
     return true
   }
+
   async register(hero){
     const data = await this.getFileData()
     const id = hero.id <= 2 ? hero.id : Date.now();
@@ -26,6 +28,7 @@ class Database {
 
     return result;
   }
+
   async list(id){
     const data = await this.getFileData()
     const filteredData = data.filter(item => (id ? (item.id === id) : true))
@@ -46,6 +49,28 @@ class Database {
     
     data.splice(indice, 1)
     return await this.writeFile(data)
+  }
+
+  async update(id, modifications){
+    const data = await this.getFileData()
+    const indice = data.findIndex(item => item.id === parseInt(id))
+
+    if(indice === -1){
+      throw Error('O heroi informado não existe')
+    }
+    const actual = data[indice]
+
+    const updateObject ={
+      ...actual,
+      ...modifications
+    }
+
+    data.splice(indice, 1)
+    
+    return await this.writeFile([
+      ...data,
+      updateObject
+    ])
   }
 }
 
