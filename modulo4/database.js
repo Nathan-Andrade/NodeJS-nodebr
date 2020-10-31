@@ -21,34 +21,36 @@ class Database {
 
   async register(hero){
     const data = await this.getFileData()
+    
     const id = hero.id <= 2 ? hero.id : Date.now();
     const heroWithId = { id, ...hero }
-    const endData = [ ...data, heroWithId ]
-    const result = await this.writeFile(endData)
-
-    return result;
+    
+    return await this.writeFile([ ...data, heroWithId ])
   }
 
   async list(id){
     const data = await this.getFileData()
-    const filteredData = data.filter(item => (id ? (item.id === id) : true))
-    return filteredData
+
+    return data.filter(item => (id ? (item.id === id) : true))
   }
 
   async remove(id){
     if(!id){
-     return await this.writeFile([])
+      await this.writeFile([]);
+      return true;
     }
 
     const data = await this.getFileData()
+
     const indice = data.findIndex(item => item.id === parseInt(id))
 
     if(indice === -1){
       throw Error('O usuario informado não existe')
     }
-    
+    const actual = data[indice];
     data.splice(indice, 1)
-    return await this.writeFile(data)
+     await this.writeFile(data)
+     return true;
   }
 
   async update(id, modifications){
@@ -59,18 +61,12 @@ class Database {
       throw Error('O heroi informado não existe')
     }
     const actual = data[indice]
-
-    const updateObject ={
-      ...actual,
-      ...modifications
-    }
-
     data.splice(indice, 1)
+
+    const updatedObject = JSON.parse(JSON.stringify(modifications))
+    const updatedData = Object.assign({}, actual, updatedObject)
     
-    return await this.writeFile([
-      ...data,
-      updateObject
-    ])
+    return await this.writeFile([...data, updatedData])
   }
 }
 

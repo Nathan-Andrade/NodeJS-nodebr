@@ -1,55 +1,45 @@
 const { deepEqual, ok } = require('assert');
-
-const database = require('./database');
-const DEFAULT_REGISTER_ITEM = {
-  name: 'Flash',
-  power: 'Speed',
-  id: 1
-}
-
+const Database = require('./database');
+const DEFAULT_REGISTER_ITEM = { name: 'Flash', power: 'speed', id: 1 };
 const DEFAULT_UPDATE_ITEM = {
   name: 'Lanterna Verde',
-  power: 'Energia do anel',
-  id: 2
-}
+  power: 'Anel do poder',
+  id: 2,
+};
 
 describe('Suite de manipulação de herois', () => {
-  before(async () =>{
-    await database.register(DEFAULT_REGISTER_ITEM)
-    await database.register(DEFAULT_UPDATE_ITEM)
-  })
+  before(async () => {
+    await Database.remover();
+    await Database.cadastrar(DEFAULT_REGISTER_ITEM);
+    await Database.cadastrar(DEFAULT_UPDATE_ITEM);
+  });
 
-  it('deve pesquisar um heroi usando arquivos', async () => {
-    const expected = DEFAULT_REGISTER_ITEM
-    const [result] = await database.list(expected.id)
-    
-    deepEqual(result, expected)
-  })
-  it('deve cadastrar um heroi, usando arquivos', async () => {
-    const expected = DEFAULT_REGISTER_ITEM
-    const result = await database.register(DEFAULT_REGISTER_ITEM)
-    const [actual] = await database.list(DEFAULT_REGISTER_ITEM.id)
+  it('deve cadastrar um heroi', async () => {
+    const expected = DEFAULT_REGISTER_ITEM;
+    await Database.cadastrar(DEFAULT_REGISTER_ITEM);
 
-    deepEqual(actual, expected)
-  })
-  it('deve remover um heroi por id', async () => {
-    const expected = true;
-    const result = await database.remove(DEFAULT_REGISTER_ITEM.id)
-    deepEqual(result, expected)
-  })
-  it('deve atualizar um herói pelo id', async () => {
-    const expected ={ 
-      ...DEFAULT_UPDATE_ITEM, 
+    const [realResult] = await Database.listar(expected.id);
+    deepEqual(realResult, expected);
+  });
+
+  it('deve listar um heroi pelo id', async () => {
+    const expected = DEFAULT_REGISTER_ITEM;
+    const result = await Database.listar(1);
+    deepEqual(result[0], expected);
+  });
+
+  it('deve atualizar um heroi pelo id', async () => {
+    const expected = {
+      ...DEFAULT_UPDATE_ITEM,
       name: 'Batman',
-      power: 'Dinheiro' 
-    }
-    const newData = {
-      name: 'Batman',
-      power: 'Dinheiro' 
-    }
-     await database.update(DEFAULT_UPDATE_ITEM.id, newData)
-    const [result] = await database.list(DEFAULT_UPDATE_ITEM.id)
+      power: 'ricão',
+    };
+    await Database.atualizar(expected.id, {
+      name: expected.name,
+      power: expected.power,
+    });
 
-    deepEqual(result, expected)
-  })
-})
+    const [realResult] = await Database.listar(expected.id);
+    deepEqual(realResult, expected);
+  });
+});
