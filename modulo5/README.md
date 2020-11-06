@@ -1,6 +1,7 @@
 ## Comandos para rodar no baco de dados
 
 ### Docker
+
 docker run \
     --name postgress \
     -e POSTGRES_USER=nathanandrade \
